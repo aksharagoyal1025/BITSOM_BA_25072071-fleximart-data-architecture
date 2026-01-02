@@ -58,7 +58,7 @@ def load_products_csv(path="products_raw.csv"):
         .str.upper()
     )
 
-    # product_id: remove P and cast to int
+    
     df["product_id"] = (
         df["product_id"]
         .astype(str)
@@ -67,13 +67,13 @@ def load_products_csv(path="products_raw.csv"):
     )
     df["product_id"] = pd.to_numeric(df["product_id"], errors="coerce")
 
-    # numeric fields
+    
     df["price"] = pd.to_numeric(df["price"], errors="coerce")
     df["stock_quantity"] = pd.to_numeric(df["stock_quantity"], errors="coerce")
 
     missing_products_before = df.isnull().sum().sum()
 
-    # NaN -> None globally
+    
     df = df.where(pd.notnull(df), None)
 
     df = df.dropna(subset=["product_id"])
@@ -99,24 +99,24 @@ def load_transactions_csv(path="sales_raw.csv"):
         df["transaction_date"],
         errors="coerce",
         dayfirst=True,
-    )  # warning ok hai
+    )  
     df = df[df["transaction_date"].notna()]
     df["transaction_date"] = df["transaction_date"].dt.date
 
     df["quantity"] = pd.to_numeric(df["quantity"], errors="coerce").fillna(0).astype(int)
     df["unit_price"] = pd.to_numeric(df["unit_price"], errors="coerce")
 
-    # drop rows with missing customer/product
+    
     df = df[(df["customer_id"] != "") & (df["product_id"] != "")]
     df = df[df["customer_id"].notna() & df["product_id"].notna()]
 
-    # order_id from transaction_id (T001 -> 1)
+
     df["order_id"] = df["transaction_id"].str.replace("T", "", case=False)
     df["order_id"] = pd.to_numeric(df["order_id"], errors="coerce")
     df = df[df["order_id"].notna()]
     df["order_id"] = df["order_id"].astype(int)
 
-    # product_id_clean (P001 -> 1)
+    
     df["product_id_clean"] = df["product_id"].str.replace("P", "", case=False)
     df["product_id_clean"] = pd.to_numeric(df["product_id_clean"], errors="coerce")
     df = df[df["product_id_clean"].notna()]
@@ -151,7 +151,7 @@ def upsert_customers(conn, customers_df):
     for _, row in customers_df.iterrows():
         email = row["email"]
         if email in (None, "", "nan", "NaN"):
-            email = ""  # NULL ki jagah empty string
+            email = "" 
         rows.append(
             (
                 row["customer_id"],
@@ -170,10 +170,10 @@ def upsert_customers(conn, customers_df):
 def upsert_products(conn, products_df):
     cursor = conn.cursor()
 
-    # Saare string "nan"/"NaN" ko proper NaN banao
+    
     products_df = products_df.replace(["nan", "NaN", "None"], pd.NA)
 
-    # Phir NaN ko None (Python null) me convert karo
+    
     products_df = products_df.where(pd.notnull(products_df), None)
 
     sql = """
@@ -195,7 +195,7 @@ def upsert_products(conn, products_df):
 
         price = row["price"]
         if price is None or pd.isna(price):
-            price = 0.0   # default price jab missing ho
+            price = 0.0  
         else:
             price = float(price)
 
@@ -217,15 +217,15 @@ def upsert_products(conn, products_df):
 def insert_orders_and_items(conn, tx_df):
     cursor = conn.cursor()
 
-    # ---- valid customers only ----
+    
     cursor.execute("SELECT customer_id FROM customers")
     valid_customers = {str(row[0]).strip() for row in cursor.fetchall()}
 
-    # keep only rows whose customer_id exists in customers table
+    
     tx_df["customer_id"] = tx_df["customer_id"].astype(str).str.strip()
     tx_df = tx_df[tx_df["customer_id"].isin(valid_customers)]
 
-    # ----- orders -----
+    
     orders_df = tx_df[["order_id", "customer_id",
                        "transaction_date", "status", "quantity", "unit_price"]].copy()
     orders_df["total_amount"] = orders_df["quantity"] * orders_df["unit_price"]
@@ -252,7 +252,7 @@ def insert_orders_and_items(conn, tx_df):
         order_rows.append(
             (
                 int(row["order_id"]),
-                row["customer_id"],          # e.g. "C001"
+                row["customer_id"],          
                 row["transaction_date"],
                 total_amount,
                 row["status"],
@@ -264,7 +264,7 @@ def insert_orders_and_items(conn, tx_df):
         conn.commit()
         print(f"orders upserted: {cursor.rowcount}")
 
-    # ----- order_items -----
+    
     items_sql = """
         INSERT INTO order_items (order_item_id, order_id, product_id, quantity, unit_price, subtotal)
         VALUES (%s, %s, %s, %s, %s, %s)
