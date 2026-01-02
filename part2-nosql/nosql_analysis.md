@@ -6,3 +6,5 @@ MongoDB is a document database that stores data in JSON‑like documents instead
 
 ## Section C: Trade-offs
 Using MongoDB instead of MySQL also has some disadvantages. First, strong relational constraints like foreign keys and complex joins are not built in the same way, so enforcing relationships between collections often depends on application logic. This can increase the chance of inconsistent data if the application is not carefully written. Second, some types of analytical queries, especially those that need heavy joins or strict ACID transactions across many entities, may be easier and more efficient in a relational database. Teams that already know SQL and relational modeling may also need extra time to learn MongoDB tools and query language.
+
+## testing for commits 
