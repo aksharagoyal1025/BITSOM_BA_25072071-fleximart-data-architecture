@@ -2,6 +2,7 @@ USE fleximart_dw;
 
 -- Query 1: Monthly Sales Drill-Down
 -- Business Scenario: The CEO wants to see sales performance broken down by time periods...
+-- Added OLAP query to analyze monthly sales by product category and region.
 
 SELECT
     d.year,
