@@ -1,0 +1,21 @@
+
+FlexiMart Data Quality Report
+
+Customers:
+  Raw records           : 26
+  Duplicates removed    : 1
+  Missing values (before cleaning, all cols): 0
+  Records loaded in DB  : 21
+
+Products:
+  Raw records           : 20
+  Duplicates removed    : 0
+  Missing values (before cleaning, all cols): 4
+  Records loaded in DB  : 20
+
+Sales / Transactions:
+  Raw records           : 41
+  Duplicates removed    : 1
+  Missing values (before cleaning, all cols): 0
+  Orders loaded in DB   : 21
+  Order items in DB     : 21
