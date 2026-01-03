@@ -7,7 +7,7 @@
 
 ## Project Overview
 
-This project builds a complete data architecture for the FlexiMart retail store. It covers an ETL pipeline into a relational database, a NoSQL product catalog in MongoDB, and a sales data warehouse with OLAP queries for analytics.
+This project builds a complete data architecture for the FlexiMart retail store. It covers an ETL pipeline into a relational database, a NoSQL product catalog in MongoDB, and a sales data warehouse with OLAP queries for analytics.This makes the overall process of maintaining data easier.
 
 ## Repository Structure
 
@@ -60,3 +60,4 @@ mysql -u root -p fleximart_dw < part3-datawarehouse/warehouse_schema.sql
 mysql -u root -p fleximart_dw < part3-datawarehouse/warehouse_data.sql
 mysql -u root -p fleximart_dw < part3-datawarehouse/analytics_queries.sql
 - Test commit for practice
+- testing
