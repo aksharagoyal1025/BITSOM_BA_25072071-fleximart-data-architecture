@@ -16,10 +16,10 @@ def get_connection():
     try:
         conn = mysql.connector.connect(**DB_CONFIG)
         if conn.is_connected():
-            print("✅ Connected to MySQL")
+            print(" Connected to MySQL")
             return conn
     except Error as e:
-        print("❌ MySQL connection error:", e)
+        print(" MySQL connection error:", e)
         raise
     raise RuntimeError("Could not connect to MySQL")
 
@@ -314,7 +314,7 @@ def run_etl():
         products_df,  prod_total, prod_dup, prod_missing = load_products_csv("products_raw.csv")
         tx_df,        sales_total, sales_dup, sales_missing = load_transactions_csv("sales_raw.csv")
 
-        print("✅ CSVs cleaned and ready")
+        print("CSVs cleaned and ready")
 
         # ---- Load ----
         upsert_customers(conn, customers_df)
@@ -360,17 +360,17 @@ Sales / Transactions:
         with open("data_quality_report.txt", "w", encoding="utf-8") as f:
             f.write(report)
 
-        print("📄 data_quality_report.txt generated")
-        print("🎉 ETL finished successfully")
+        print(" data_quality_report.txt generated")
+        print(" ETL finished successfully")
 
     except Exception as e:
-        print("❌ ETL failed:", e)
+        print(" ETL failed:", e)
         if conn is not None and conn.is_connected():
             conn.close()
         raise
     finally:
         if conn is not None and conn.is_connected():
-            print("🔌 MySQL connection closed")
+            print(" MySQL connection closed")
             conn.close()
 
 if __name__ == "__main__":
